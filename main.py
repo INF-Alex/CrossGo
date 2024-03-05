@@ -76,6 +76,33 @@ class TreeNode:
             return 1
         return sum([kid.count() for kid in self.child])
     
+def generate():
+    print('generating model...')
+    game = Board()
+    origin = TreeNode(game)
+    origin.child = game.next()
+    workplace = Queue()
+
+    for kid in origin.child:
+        workplace.put(kid)
+
+    while not workplace.empty():
+        item = workplace.get()
+        if item.root.check() != None:
+            item.value = item.root.check()
+        else:
+            item.child = item.root.next()
+            for kid in item.child:
+                workplace.put(kid)
+
+    origin.cal_val()
+    with open('model.pkl','wb') as f:
+        model_str = pickle.dumps(origin)
+        print(origin.child[0].value)
+        assert(origin.child[0].child[0].child[0].child[1].child[3].child[0].child[0].child[1].value == 0)
+        print('assert1 ok')
+        f.write(model_str)
+    
 def f1():
     global origin
     a = [origin.child[i].value for i in range(len(origin.child))]
@@ -109,9 +136,9 @@ def draw_cross(screen, MAP):
                 x = row * SQUARE_SIZE + SQUARE_SIZE // 2
                 y = col * SQUARE_SIZE + SQUARE_SIZE // 2
                 if MAP[row][col] == 1:
-                    pygame.draw.circle(screen, C1, (x, y), SQUARE_SIZE // 3)
+                    pygame.draw.circle(screen, C1, (x, y), SQUARE_SIZE // 5)
                 else:
-                    pygame.draw.circle(screen, C2, (x, y), SQUARE_SIZE // 3)
+                    pygame.draw.circle(screen, C2, (x, y), SQUARE_SIZE // 5)
 
 
 def get_mouse_cell(position):
@@ -123,8 +150,10 @@ if os.path.exists('model.pkl'):
     with open('model.pkl', 'rb') as f:
         origin = pickle.loads(f.read())
 else:
-    print('please generate model!')
-    exit()
+    generate()
+    print('ready!')
+    with open('model.pkl', 'rb') as f:
+        origin = pickle.loads(f.read())
 
 pygame.init()
 
@@ -135,16 +164,29 @@ clock = pygame.time.Clock()
 
 MAP = [[0,0,0],[0,0,0],[0,0,0]]
 
+
+draw_chess_board(screen)
+draw_cross(screen, MAP)     # 必须放在draw_board之后
+pygame.display.flip()
+clock.tick(30)
+
 running = True
 while running:
+    f_find(MAP)
     MAP = f1()
+    draw_chess_board(screen)
+    draw_cross(screen, MAP)     # 必须放在draw_board之后
+    pygame.display.flip()
+    clock.tick(30)
     waiting = True
     while waiting:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                running = False
+                pygame.quit()
+                sys.exit()
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 axis = get_mouse_cell(event.pos)
+                print('axis',axis)
                 if MAP[axis[0]][axis[1]] == 0:
                     MAP[axis[0]][axis[1]] = -1
                     waiting = False
