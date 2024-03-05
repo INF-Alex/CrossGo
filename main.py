@@ -5,6 +5,8 @@ import pickle
 import pygame
 import sys
 import numpy as np
+import tkinter as tk
+import tkinter.messagebox
 
 # Constants
 WIDTH, HEIGHT = 600, 600
@@ -76,6 +78,7 @@ class TreeNode:
             return 1
         return sum([kid.count() for kid in self.child])
     
+    
 def generate():
     print('generating model...')
     game = Board()
@@ -140,62 +143,86 @@ def draw_cross(screen, MAP):
                 else:
                     pygame.draw.circle(screen, C2, (x, y), SQUARE_SIZE // 5)
 
-
 def get_mouse_cell(position):
     return [position[0] // SQUARE_SIZE, position[1] // SQUARE_SIZE]
 
+def check(MAP):
+    for player in [TICK,CROSS]:
+        if (any([all([MAP[x][y] == player for y in range(3)]) for x in range(3)]) 
+            or any([all([MAP[x][y] == player for x in range(3)]) for y in range(3)])):
+            return player
+        if all([MAP[x][x] == player for x in range(3)]) or all([MAP[x][2-x] == player for x in range(3)]):
+            return player
+    if all([MAP[x][y] != 0 for x in range(3) for y in range(3)]):
+        return 0    # 平局
+    return None
 
 
-if os.path.exists('model.pkl'):
-    with open('model.pkl', 'rb') as f:
-        origin = pickle.loads(f.read())
-else:
-    generate()
-    print('ready!')
-    with open('model.pkl', 'rb') as f:
-        origin = pickle.loads(f.read())
 
-pygame.init()
-
-screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Cross Chess Board")
-
-clock = pygame.time.Clock()
-
-MAP = [[0,0,0],[0,0,0],[0,0,0]]
-
-
-draw_chess_board(screen)
-draw_cross(screen, MAP)     # 必须放在draw_board之后
-pygame.display.flip()
-clock.tick(30)
-
-running = True
-while running:
-    f_find(MAP)
-    MAP = f1()
-    draw_chess_board(screen)
-    draw_cross(screen, MAP)     # 必须放在draw_board之后
-    pygame.display.flip()
-    clock.tick(30)
-    waiting = True
-    while waiting:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
-            elif event.type == pygame.MOUSEBUTTONDOWN:
-                axis = get_mouse_cell(event.pos)
-                print('axis',axis)
-                if MAP[axis[0]][axis[1]] == 0:
-                    MAP[axis[0]][axis[1]] = -1
-                    waiting = False
+def game_run(screen,clock):
+    MAP = [[0,0,0],[0,0,0],[0,0,0]]
 
     draw_chess_board(screen)
     draw_cross(screen, MAP)     # 必须放在draw_board之后
     pygame.display.flip()
     clock.tick(30)
 
-pygame.quit()
-sys.exit()
+    running = True
+    while running:
+        if check(MAP) != None:
+            break
+        f_find(MAP)
+        MAP = f1()
+        draw_chess_board(screen)
+        draw_cross(screen, MAP)     # 必须放在draw_board之后
+        pygame.display.flip()
+        clock.tick(30)
+        if check(MAP) != None:
+            break
+        waiting = True
+        while waiting:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    axis = get_mouse_cell(event.pos)
+                    print('axis',axis)
+                    if MAP[axis[0]][axis[1]] == 0:
+                        MAP[axis[0]][axis[1]] = -1
+                        waiting = False
 
+        draw_chess_board(screen)
+        draw_cross(screen, MAP)     # 必须放在draw_board之后
+        pygame.display.flip()
+        clock.tick(30)
+    return check(MAP)
+
+origin = None
+def main():
+
+    while True:
+        pygame.init()
+
+        screen = pygame.display.set_mode((WIDTH, HEIGHT))
+        pygame.display.set_caption("Loading......")
+
+        clock = pygame.time.Clock()
+        global origin
+        if os.path.exists('model.pkl'):
+            with open('model.pkl', 'rb') as f:
+                origin = pickle.loads(f.read())
+        else:
+            generate()
+            print('ready!')
+            with open('model.pkl', 'rb') as f:
+                origin = pickle.loads(f.read())
+
+        pygame.display.set_caption("Cross Chess Board")
+        winner = game_run(screen, clock)
+        pygame.quit()
+
+
+
+if __name__ == '__main__':
+    main()
