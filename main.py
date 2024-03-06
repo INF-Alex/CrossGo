@@ -41,6 +41,12 @@ def f_find(current):
     print("can't find kid!")
 
 def load():
+    
+    pygame.init()
+    screen = pygame.display.set_mode((WIDTH, HEIGHT))
+    pygame.display.set_caption("Loading......")
+
+    clock = pygame.time.Clock()
     global origin
     if os.path.exists('model.pkl'):
         with open('model.pkl', 'rb') as f:
@@ -50,8 +56,9 @@ def load():
         print('ready!')
         with open('model.pkl', 'rb') as f:
             origin = pickle.loads(f.read())
+    pygame.quit()
 
-def game_run():
+def game_run_1():
     
     pygame.init()
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -102,15 +109,10 @@ def main():
 
     global origin
     while True:
-        pygame.init()
-        screen = pygame.display.set_mode((WIDTH, HEIGHT))
-        pygame.display.set_caption("Loading......")
-
-        clock = pygame.time.Clock()
         load()
-        pygame.quit()
+        
 
-        winner = game_run()
+        winner = game_run_1()
 
 
 if __name__ == '__main__':
