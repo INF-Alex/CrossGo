@@ -6,6 +6,7 @@ from threading import Thread
 import pickle
 import pygame
 import sys
+import time
 import numpy as np
 import tkinter as tk
 import tkinter.messagebox
@@ -21,32 +22,32 @@ def wander(a,f=max):
         i = random.randint(0,len(a)-1)
     return i
 def f1():
-    global origin
-    a = [origin.child[i].value for i in range(len(origin.child))]
+    global origin, path
+    node = ask(origin,path)
+    a = [node.child[i].value for i in range(len(node.child))]
     x = wander(a,max)
-    origin = origin.child[x]
-    return origin.root.pos
+    # x = np.argmax(a)
+    path.append(x)
+    return node.child[x].root.pos
 def f2():
-    global origin
-    a = [origin.child[i].value for i in range(len(origin.child))]
+    global origin,path
+    node = ask(origin,path)
+    a = [node.child[i].value for i in range(len(node.child))]
     x = wander(a,min)
-    origin = origin.child[np.argmin(a)]
-    return origin.root.pos
+    path.append(x)
+    return node.child[x].root.pos
 def f_find(current):
-    global origin
-    for kid in origin.child:
+    global origin,path
+    node = ask(origin,path)
+    for i,kid in enumerate(node.child):
         if kid.root.pos == current:
-            origin = kid
+            path.append(i)
             return
-    print("can't find kid!")
 
 def load():
-    
     pygame.init()
-    screen = pygame.display.set_mode((WIDTH, HEIGHT))
     pygame.display.set_caption("Loading......")
 
-    clock = pygame.time.Clock()
     global origin
     if os.path.exists('model.pkl'):
         with open('model.pkl', 'rb') as f:
@@ -56,13 +57,21 @@ def load():
         print('ready!')
         with open('model.pkl', 'rb') as f:
             origin = pickle.loads(f.read())
+
     pygame.quit()
 
+def ask(origin, path):
+    if path == []:
+        return origin
+    p = copy.deepcopy(path)
+    x = p.pop(0)
+    return ask(origin.child[x], p)
+
 def game_run_1():
-    
+    global origin, path
     pygame.init()
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
-    pygame.display.set_caption("Cross Chess Board") 
+    pygame.display.set_caption("Cross Chess") 
     clock = pygame.time.Clock()
 
     MAP = [[0,0,0],[0,0,0],[0,0,0]]
@@ -77,7 +86,7 @@ def game_run_1():
         if check(MAP) != None:
             break
         f_find(MAP)
-        MAP = f1()
+        MAP = copy.deepcopy(f1())
         draw_chess_board(screen)
         draw_cross(screen, MAP)     # 必须放在draw_board之后
         pygame.display.flip()
@@ -107,11 +116,10 @@ def game_run_1():
 
 def main():
 
-    global origin
+    load()
     while True:
-        load()
-        
-
+        global path
+        path = list()
         winner = game_run_1()
 
 
