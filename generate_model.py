@@ -49,7 +49,6 @@ class TreeNode:
         self.root = root
         self.child = child
         self.value = None
-        self.choice = None
     def add_child(self, child):
         self.child.append(child)
     def cal_val(self):
@@ -66,10 +65,7 @@ class TreeNode:
             return 1
         return sum([kid.count() for kid in self.child])
 
-if os.path.exists('model.pkl'):
-    with open('model.pkl', 'rb') as f:
-        origin = pickle.loads(f.read())
-else:
+def generate():
     print('generating model...')
     game = Board()
     origin = TreeNode(game)
@@ -88,26 +84,37 @@ else:
             for kid in item.child:
                 workplace.put(kid)
 
+    origin.cal_val()
     with open('model.pkl','wb') as f:
         model_str = pickle.dumps(origin)
         f.write(model_str)
 
-# print('OriginVal:',origin.cal_val())
+def main():
+    if os.path.exists('model.pkl'):
+        with open('model.pkl', 'rb') as f:
+            origin = pickle.loads(f.read())
+    else:
+        generate()
 
-# tree = copy.deepcopy(origin)
-# def f1():
-#     global tree
-#     a = [tree.child[i].value for i in range(len(tree.child))]
-#     tree = tree.child[np.argmax(a)]
-#     print(np.argmax(a))
-#     return np.argmax(a)
-# def f2():
-#     global tree
-#     a = [tree.child[i].value for i in range(len(tree.child))]
-#     tree = tree.child[np.argmin(a)]
-#     print(np.argmin(a))
-#     return np.argmin(a)
+    # print('OriginVal:',origin.cal_val())
+
+    # tree = copy.deepcopy(origin)
+    # def f1():
+    #     global tree
+    #     a = [tree.child[i].value for i in range(len(tree.child))]
+    #     tree = tree.child[np.argmax(a)]
+    #     print(np.argmax(a))
+    #     return np.argmax(a)
+    # def f2():
+    #     global tree
+    #     a = [tree.child[i].value for i in range(len(tree.child))]
+    #     tree = tree.child[np.argmin(a)]
+    #     print(np.argmin(a))
+    #     return np.argmin(a)
 
 
-end_time = time.time()
-print('running time:',end_time-start_time,'s')
+    end_time = time.time()
+    print('running time:',end_time-start_time,'s')
+
+if __name__ == "__main__":
+    main()
