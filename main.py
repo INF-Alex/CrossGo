@@ -98,22 +98,19 @@ def game_run():
 
     return check(MAP)
 
-origin = None
-i, j = 0,0
 def main():
 
-    
+    global origin
     while True:
         pygame.init()
         screen = pygame.display.set_mode((WIDTH, HEIGHT))
         pygame.display.set_caption("Loading......")
 
         clock = pygame.time.Clock()
-        global origin
         load()
         pygame.quit()
-        winner = game_run()
 
+        winner = game_run()
 
 
 if __name__ == '__main__':
