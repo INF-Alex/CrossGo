@@ -69,14 +69,6 @@ def game_run():
     while running:
         if check(MAP) != None:
             break
-        f_find(MAP)
-        MAP = f1()
-        draw_chess_board(screen)
-        draw_cross(screen, MAP)     # 必须放在draw_board之后
-        pygame.display.flip()
-        clock.tick(30)
-        if check(MAP) != None:
-            break
         waiting = True
         while waiting:
             for event in pygame.event.get():
@@ -87,9 +79,17 @@ def game_run():
                     axis = get_mouse_cell(event.pos)
                     print('axis',axis)
                     if MAP[axis[0]][axis[1]] == 0:
-                        MAP[axis[0]][axis[1]] = -1
+                        MAP[axis[0]][axis[1]] = 1
                         waiting = False
 
+        draw_chess_board(screen)
+        draw_cross(screen, MAP)     # 必须放在draw_board之后
+        pygame.display.flip()
+        clock.tick(30)
+        if check(MAP) != None:
+            break
+        f_find(MAP)
+        MAP = f2()
         draw_chess_board(screen)
         draw_cross(screen, MAP)     # 必须放在draw_board之后
         pygame.display.flip()
