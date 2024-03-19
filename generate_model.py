@@ -3,6 +3,8 @@ import copy
 from queue import Queue
 import pickle
 import time
+import pygame
+from game_UI import WIDTH, HEIGHT, BOARD_SIZE, SQUARE_SIZE, TICK, CROSS, EMPTY, WHITE, BLACK, C1, C2
 
 TICK = 1
 CROSS = -1
@@ -64,6 +66,27 @@ class TreeNode:
         if self.child == None:
             return 1
         return sum([kid.count() for kid in self.child])
+    
+def load():
+
+    pygame.init()
+    screen = pygame.display.set_mode((WIDTH, HEIGHT))
+    screen.fill(WHITE)
+    pygame.display.set_caption("Loading......")
+    clock = pygame.time.Clock()
+    pygame.display.flip()
+    if os.path.exists('model.pkl'):
+        with open('model.pkl', 'rb') as f:
+            origin = pickle.loads(f.read())
+    else:
+        generate()
+        print('ready!')
+        with open('model.pkl', 'rb') as f:
+            origin = pickle.loads(f.read())
+
+    pygame.quit()
+
+    return origin
 
 def generate():
     print('generating model...')

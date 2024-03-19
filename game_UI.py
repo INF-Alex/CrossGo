@@ -30,12 +30,12 @@ def draw_cross(screen, MAP):
                 x = row * SQUARE_SIZE + SQUARE_SIZE // 2
                 y = col * SQUARE_SIZE + SQUARE_SIZE // 2
                 if MAP[row][col] == 1:
-                    pygame.draw.circle(screen, C1, (x, y), SQUARE_SIZE // 5)
+                    pygame.draw.circle(screen, C1, (y, x), SQUARE_SIZE // 5)
                 else:
-                    pygame.draw.circle(screen, C2, (x, y), SQUARE_SIZE // 5)
+                    pygame.draw.circle(screen, C2, (y, x), SQUARE_SIZE // 5)
 
 def get_mouse_cell(position):
-    return [position[0] // SQUARE_SIZE, position[1] // SQUARE_SIZE]
+    return [position[1] // SQUARE_SIZE, position[0] // SQUARE_SIZE]
 
 def check(MAP):
     for player in [TICK,CROSS]:
@@ -71,7 +71,7 @@ def game_UI():
 
         draw_chess_board(screen)
         for axis in put:
-            draw_cross(screen,axis[0],axis[1])
+            print(axis)
         pygame.display.flip()
         clock.tick(30)
 
