@@ -47,7 +47,7 @@ def ask(origin, path):
 def game_run_1(origin, path):
     pygame.init()
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
-    pygame.display.set_caption("Cross Chess") 
+    pygame.display.set_caption("井字棋游戏") 
     clock = pygame.time.Clock()
 
     MAP = [[0,0,0],[0,0,0],[0,0,0]]
@@ -93,7 +93,7 @@ def game_run_1(origin, path):
 def game_run_2(origin, path):
     pygame.init()
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
-    pygame.display.set_caption("Cross Chess") 
+    pygame.display.set_caption("井字棋游戏") 
     clock = pygame.time.Clock()
 
     MAP = [[0,0,0],[0,0,0],[0,0,0]]

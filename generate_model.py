@@ -73,7 +73,12 @@ def load():
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
     screen.fill(WHITE)
     pygame.display.set_caption("Loading......")
-    clock = pygame.time.Clock()
+
+    font = pygame.font.SysFont("SimHei", 48)
+    text = font.render("数据载入中，请等待！", True, BLACK)
+    text_rect = text.get_rect(center=(WIDTH // 2, HEIGHT // 2))
+    screen.blit(text, text_rect)
+    
     pygame.display.flip()
     if os.path.exists('model.pkl'):
         with open('model.pkl', 'rb') as f:
@@ -118,23 +123,6 @@ def main():
             origin = pickle.loads(f.read())
     else:
         generate()
-
-    # print('OriginVal:',origin.cal_val())
-
-    # tree = copy.deepcopy(origin)
-    # def f1():
-    #     global tree
-    #     a = [tree.child[i].value for i in range(len(tree.child))]
-    #     tree = tree.child[np.argmax(a)]
-    #     print(np.argmax(a))
-    #     return np.argmax(a)
-    # def f2():
-    #     global tree
-    #     a = [tree.child[i].value for i in range(len(tree.child))]
-    #     tree = tree.child[np.argmin(a)]
-    #     print(np.argmin(a))
-    #     return np.argmin(a)
-
 
     end_time = time.time()
     print('running time:',end_time-start_time,'s')

@@ -1,6 +1,3 @@
-import time
-import pygame
-
 from generate_model import load
 from game_engine import game_run_1, game_run_2
 from home_page import home
@@ -10,22 +7,26 @@ def main():
 
     origin = load()
 
-    winner = 'EMPTY'
+    winner = ''
     running = True
     while running:
         global path
         path = list()
-        x = home()
-        if x == '1':    
+        x = home(winner)
+        if x == '2':    
+            x = '1'
             winner = game_run_1(origin, path)
-        elif x == '2':    
+        elif x == '1':    
+            x = '2'
             winner = game_run_2(origin, path)
         else:
             running = False
-        if winner == '1':
-            winner = 'RED'
-        elif winner == '-1':
-            winner = 'BLUE'
+        if not winner:
+            winner = '平局'
+        elif winner == x:
+            winner = '玩家胜利'
+        else:
+            winner = '电脑胜利'
         print('winner:',winner)
 
 
