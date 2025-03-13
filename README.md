@@ -1,6 +1,5 @@
 # README
 
-Python公选课期末作业。
 基于DFS的井字棋AI。
 
 ## Quick Start
@@ -9,3 +8,6 @@ Python公选课期末作业。
 python main.py
 ```
 
+## Example
+
+<img src="./src/example.gif" style="zoom:50%;" />
